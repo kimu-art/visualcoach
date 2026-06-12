@@ -787,5 +787,32 @@
   }
   bind();
 </script>
+
+<!-- ===== 自適應高度：把頁面真實高度回報給外層 iframe（Teachify） ===== -->
+<script>
+(function(){
+  function sendHeight(){
+    var h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    // 帶上識別字串，讓外層只認自己的頁面
+    parent.postMessage({ kimuFrameHeight: h }, "*");
+  }
+  // 初次載入、圖片載入完、視窗縮放都回報一次
+  window.addEventListener("load", function(){ sendHeight(); setTimeout(sendHeight, 300); });
+  window.addEventListener("resize", sendHeight);
+  // 內容變動（展開閱讀、FAQ 手風琴）也即時回報
+  if (window.ResizeObserver){
+    new ResizeObserver(sendHeight).observe(document.body);
+  } else {
+    setInterval(sendHeight, 800); // 舊瀏覽器退而求其次
+  }
+  // 點擊後內容可能展開，補一次
+  document.addEventListener("click", function(){ setTimeout(sendHeight, 350); });
+})();
+</script>
 </body>
 </html>
