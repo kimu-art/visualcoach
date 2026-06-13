@@ -1,2 +1,2 @@
 # visualcoach
-KIMU的視覺化創作探索
+KIMU的視覺化人生教練-通用版
